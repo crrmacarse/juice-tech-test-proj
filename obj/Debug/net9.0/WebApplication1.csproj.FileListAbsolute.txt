@@ -31,6 +31,4 @@
 /Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/obj/Debug/net9.0/WebApplication1.pdb
 /Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/obj/Debug/net9.0/WebApplication1.genruntimeconfig.cache
 /Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/obj/Debug/net9.0/ref/WebApplication1.dll
-/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
-/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
-/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Scalar.AspNetCore.dll
