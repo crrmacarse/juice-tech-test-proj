@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,24 +14,40 @@ namespace WebApplication1
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IConfiguration configuration) : ControllerBase
+    public class AuthController : ControllerBase
     {
-        public static User user = new();
+        private readonly IUserService _userService;
+        private readonly IConfiguration _configuration;
+        private readonly AppDbContext _dbContext;
+
+        public AuthController(IConfiguration configuration, AppDbContext dbContext, IUserService userService) {
+            _userService = userService;
+            _configuration = configuration;
+            _dbContext = dbContext;
+        }
 
         [HttpPost("register")]
-        public ActionResult<User> Register(UserDto request)
+        public async Task<ActionResult<User>> Register(UserDto request)
         {
-            var hashedPassword = new PasswordHasher<User>()
-            .HashPassword(user, request.Password);
+            var user = new User();
+            var hashedPassword = _userService.HashPassword(user, request.Password);
 
+            user.FullName = request.FullName;
             user.Username = request.Username;
             user.Password = hashedPassword;
 
-            return Ok(user);
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok("Goods");
+
+            return CreatedAtAction(nameof(_userService.GetUserById), new { id = user.ID }, user);
         }
 
         [HttpPost("login")]
         public ActionResult<string> Login(UserDto request) {
+            var user = new User();
+
             if (user.Username != request.Username) {
                 return BadRequest("User not found");
             }
@@ -45,20 +62,22 @@ namespace WebApplication1
             return Ok(token);
         }
 
+      
+
         private string CreateToken(User user) {
             var claims = new List<Claim> {
                 new Claim(ClaimTypes.Name, user.Username)
             };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!)
+                Encoding.UTF8.GetBytes(_configuration.GetValue<string>("AppSettings:Token")!)
             );
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
             var tokenDescriptor = new JwtSecurityToken(
-                issuer: configuration.GetValue<string>("AppSettings:Issuer"),
-                audience: configuration.GetValue<string>("AppSettings:Audience"),
+                issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
+                audience: _configuration.GetValue<string>("AppSettings:Audience"),
                 claims: claims,
                 expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: creds
