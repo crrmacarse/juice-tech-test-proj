@@ -1,12 +1,19 @@
 {
   "version": 2,
-  "dgSpecHash": "VU+qAuoEuhc=",
+  "dgSpecHash": "YcbkdTZplRE=",
   "success": true,
   "projectFilePath": "/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/WebApplication1.csproj",
   "expectedPackageFiles": [
     "/Users/pablongbuhaymo/.nuget/packages/microsoft.aspnetcore.openapi/9.0.2/microsoft.aspnetcore.openapi.9.0.2.nupkg.sha512",
+    "/Users/pablongbuhaymo/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/8.0.2/microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",
+    "/Users/pablongbuhaymo/.nuget/packages/microsoft.extensions.logging.abstractions/8.0.2/microsoft.extensions.logging.abstractions.8.0.2.nupkg.sha512",
+    "/Users/pablongbuhaymo/.nuget/packages/microsoft.identitymodel.abstractions/8.6.0/microsoft.identitymodel.abstractions.8.6.0.nupkg.sha512",
+    "/Users/pablongbuhaymo/.nuget/packages/microsoft.identitymodel.jsonwebtokens/8.6.0/microsoft.identitymodel.jsonwebtokens.8.6.0.nupkg.sha512",
+    "/Users/pablongbuhaymo/.nuget/packages/microsoft.identitymodel.logging/8.6.0/microsoft.identitymodel.logging.8.6.0.nupkg.sha512",
+    "/Users/pablongbuhaymo/.nuget/packages/microsoft.identitymodel.tokens/8.6.0/microsoft.identitymodel.tokens.8.6.0.nupkg.sha512",
     "/Users/pablongbuhaymo/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512",
-    "/Users/pablongbuhaymo/.nuget/packages/scalar.aspnetcore/2.0.18/scalar.aspnetcore.2.0.18.nupkg.sha512"
+    "/Users/pablongbuhaymo/.nuget/packages/scalar.aspnetcore/2.0.18/scalar.aspnetcore.2.0.18.nupkg.sha512",
+    "/Users/pablongbuhaymo/.nuget/packages/system.identitymodel.tokens.jwt/8.6.0/system.identitymodel.tokens.jwt.8.6.0.nupkg.sha512"
   ],
   "logs": []
 }

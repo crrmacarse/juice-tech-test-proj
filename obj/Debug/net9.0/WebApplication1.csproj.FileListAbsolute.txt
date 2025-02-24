@@ -33,3 +33,8 @@
 /Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/obj/Debug/net9.0/ref/WebApplication1.dll
 /Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Scalar.AspNetCore.dll
 /Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/obj/Debug/net9.0/WebApplication1.sourcelink.json
+/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Microsoft.IdentityModel.Logging.dll
+/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Microsoft.IdentityModel.Tokens.dll
+/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/System.IdentityModel.Tokens.Jwt.dll
