@@ -9,16 +9,13 @@ namespace WebApplication1
     public class ProductController : ControllerBase
     {
         public static Product product = new();
-
-        [HttpGet]
-        public IActionResult Get() => Ok("Hello, world!");
         
-        // [HttpGet("/")]
-        // public ActionResult<Product[]> GetProducts() {
-        //     return Ok();
-        // }
+        [HttpGet]
+        public ActionResult<Product[]> GetProducts() {
+            return Ok();
+        }
 
-        [HttpGet("/user")]
+        [HttpGet("user")]
         public ActionResult<Product[]> GetProductsByUser() {
             return Ok();
         }
