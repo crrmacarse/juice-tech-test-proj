@@ -126,3 +126,6 @@
 /Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.dll
+/Users/pablongbuhaymo/Developer/Projects/juice-test-project/WebApplication1/bin/Debug/net9.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
