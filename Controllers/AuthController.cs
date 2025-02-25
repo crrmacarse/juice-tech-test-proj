@@ -1,15 +1,8 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using WebApplication1.Entities;
 
-// TODO: logout, profile
+// TODO: logout, role-based
 namespace WebApplication1
 {
     [Route("api/[controller]")]
@@ -17,73 +10,40 @@ namespace WebApplication1
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IConfiguration _configuration;
-        private readonly AppDbContext _dbContext;
 
-        public AuthController(IConfiguration configuration, AppDbContext dbContext, IUserService userService) {
+        public AuthController(IUserService userService) {
             _userService = userService;
-            _configuration = configuration;
-            _dbContext = dbContext;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(UserDto request)
         {
-            var user = new User();
-            var hashedPassword = _userService.HashPassword(user, request.Password);
+            var user = await _userService.RegisterAsync(request);
 
-            user.FullName = request.FullName;
-            user.Username = request.Username;
-            user.Password = hashedPassword;
+            if (user == null) {
+                return BadRequest("Invalid Request");
+            }
 
-            await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
+            return Ok("Registered Successfully");
 
-            return Ok("Goods");
-
-            return CreatedAtAction(nameof(_userService.GetUserById), new { id = user.ID }, user);
+            // return CreatedAtAction(nameof(_userService.GetUserById), new { id = user.ID }, user);
         }
 
         [HttpPost("login")]
-        public ActionResult<string> Login(UserDto request) {
-            var user = new User();
+        public async Task<ActionResult<string>> Login(AuthLoginDto request) {
+            var token = await _userService.LoginAsync(request);
 
-            if (user.Username != request.Username) {
-                return BadRequest("User not found");
+            if (token == null) {
+                return BadRequest("Invalid username or password");
             }
-
-            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.Password, request.Password)
-            == PasswordVerificationResult.Failed) {
-                return BadRequest("Wrong Password");
-            }
-
-            string token = CreateToken(user);
 
             return Ok(token);
         }
 
-      
-
-        private string CreateToken(User user) {
-            var claims = new List<Claim> {
-                new Claim(ClaimTypes.Name, user.Username)
-            };
-
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration.GetValue<string>("AppSettings:Token")!)
-            );
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-
-            var tokenDescriptor = new JwtSecurityToken(
-                issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
-                audience: _configuration.GetValue<string>("AppSettings:Audience"),
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(1),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        [Authorize]
+        [HttpGet("profile")]
+        public async Task<ActionResult> Profile() {
+            return Ok("Authorized!");
         }
     }
 }
