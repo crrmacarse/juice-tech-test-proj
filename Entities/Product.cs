@@ -20,6 +20,9 @@ public class Product
     [Column("price")]
     public int Price { get; set; }
 
+    public int UserId { get; set; }
+    public User User { get; set; }
+
 }
 
 

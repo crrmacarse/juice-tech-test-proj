@@ -20,4 +20,5 @@ public class User
     [Column("password")]
     public string Password { get; set; } = string.Empty;
 
+    public List<Product> Products { get; set; } = new();
 }
