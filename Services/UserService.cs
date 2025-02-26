@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,17 +11,21 @@ public interface IUserService
 {
     string HashPassword(User user, string password);
 
-    Task<User?> GetUserById(int id);
+    Task<User?> GetUserById(int ID);
 
     Task<User?> RegisterAsync(UserDto request);
 
-    Task<string?> LoginAsync(AuthLoginDto request);
+    Task<AuthResponseDto?> LoginAsync(AuthLoginDto request);
+
+    Task<AuthResponseDto?> RefreshTokenAsync(AuthRefreshTokenRequestDto request);
+
+    Task<User?> Logout(int ID);
 }
 
 public class UserService : IUserService
 {
     private readonly AppDbContext _dbContext;
-            private readonly IConfiguration _configuration;
+    private readonly IConfiguration _configuration;
 
     public UserService(AppDbContext dbContext, IConfiguration configuration)
     {
@@ -39,9 +44,9 @@ public class UserService : IUserService
         return hashedPassword;
     }
 
-    public async Task<User?> GetUserById(int id)
+    public async Task<User?> GetUserById(int ID)
     {
-        return await _dbContext.Users.FirstOrDefaultAsync(x => x.ID == id);
+        return await _dbContext.Users.FindAsync(ID);
     }
 
     public async Task<User?> RegisterAsync(UserDto request)
@@ -64,7 +69,7 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<string?> LoginAsync(AuthLoginDto request)
+    public async Task<AuthResponseDto?> LoginAsync(AuthLoginDto request)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username.ToLower() == request.Username.ToLower());
 
@@ -79,14 +84,17 @@ public class UserService : IUserService
             return null;
         }
 
-        return CreateToken(user);
+        var response = await CreateTokenResponseAsync(user);
+
+        return response;
     }
 
     private string CreateToken(User user)
     {
         var claims = new List<Claim> {
+                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
+                new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString())
             };
 
         var key = new SymmetricSecurityKey(
@@ -99,10 +107,78 @@ public class UserService : IUserService
             issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
             audience: _configuration.GetValue<string>("AppSettings:Audience"),
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(1),
+            expires: DateTime.UtcNow.AddMinutes(15),
             signingCredentials: creds
         );
 
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+    }
+
+    private string CreateRefreshToken()
+    {
+        var randomNumber = new byte[32];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+
+        return Convert.ToBase64String(randomNumber);
+    }
+
+    private async Task<string> GenerateRefreshTokenAsync(User user)
+    {
+        var refreshToken = CreateRefreshToken();
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+        await _dbContext.SaveChangesAsync();
+        return refreshToken;
+    }
+
+    private async Task<User?> ValidateRefreshTokenAsync(int ID, string refreshToken)
+    {
+        var user = await _dbContext.Users.FindAsync(ID);
+
+        if (
+            user == null
+            || user.RefreshToken != refreshToken
+            || user.RefreshTokenExpiry <= DateTime.UtcNow)
+        {
+            return null;
+        }
+
+        return user;
+    }
+
+    private async Task<AuthResponseDto> CreateTokenResponseAsync(User user) {
+        var tokens = new AuthResponseDto
+        {
+            AccessToken = CreateToken(user),
+            RefreshToken = await GenerateRefreshTokenAsync(user),
+        };
+
+       return tokens;
+    }
+    
+    public async Task<AuthResponseDto?> RefreshTokenAsync(AuthRefreshTokenRequestDto request) {
+        var user = await ValidateRefreshTokenAsync(request.ID, request.RefreshToken);
+
+        if (user == null) {
+            return null;
+        }
+
+        return await CreateTokenResponseAsync(user);
+    }
+
+    public async Task<User?> Logout (int ID) {
+        var user = await GetUserById(ID);
+
+        if (user == null) {
+            return null;
+        }
+
+        user.RefreshToken = null;
+        user.RefreshTokenExpiry = null;
+
+        await _dbContext.SaveChangesAsync();
+
+        return user;
     }
 }
