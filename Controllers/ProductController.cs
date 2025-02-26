@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Entities;
@@ -18,6 +19,12 @@ namespace WebApplication1
         [HttpGet("user")]
         public ActionResult<Product[]> GetProductsByUser() {
             return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("admin")]
+        public ActionResult GetProductByAdminOnly() {
+            return Ok("Admin only");
         }
     }
 }
