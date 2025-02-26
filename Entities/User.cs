@@ -20,5 +20,14 @@ public class User
     [Column("password")]
     public string Password { get; set; } = string.Empty;
 
+    [Column("role")]
+    public string Role { get; set; } = "client";
+
+    [Column("refresh_token")]
+    public string? RefreshToken { get; set; }
+
+    [Column("refresh_token_expiry")]
+    public DateTime? RefreshTokenExpiry { get; set; }
+
     public List<Product> Products { get; set; } = new();
 }
